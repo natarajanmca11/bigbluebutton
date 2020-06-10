@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,21 +25,21 @@ spec:
       name: redis
     spec:
       containers:
-      - image: redis:latest
-        imagePullPolicy: Always
-        name: redis
-        ports:
-        - containerPort: 6379
-          protocol: TCP
+        - image: redis:latest
+          imagePullPolicy: Always
+          name: redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -49,7 +49,7 @@ metadata:
   namespace: bigbluebutton
 spec:
   ports:
-  - targetPort: 6379
-    port: 6379
+    - targetPort: 6379
+      port: 6379
   selector:
     app: redis

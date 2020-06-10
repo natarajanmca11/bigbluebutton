@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,19 +25,27 @@ spec:
       name: bbb-fsesl-akka
     spec:
       containers:
-      - env:
-        - name: JAVA_OPTS
-          value: -Dredis.host=redis -Dfreeswitch.esl.host=bbb-freeswitch
-        image: fcecagno/bigbluebutton:bbb-fsesl-akka
-        imagePullPolicy: Always
-        name: bbb-fsesl-akka
-        command: ["wait-for-it.sh", "bbb-freeswitch:8021", "--timeout=60", "--strict", "--", "/usr/share/bbb-fsesl-akka/bin/bbb-fsesl-akka"]
+        - env:
+            - name: JAVA_OPTS
+              value: -Dredis.host=redis -Dfreeswitch.esl.host=bbb-freeswitch
+          image: fcecagno/bigbluebutton:bbb-fsesl-akka
+          imagePullPolicy: Always
+          name: bbb-fsesl-akka
+          command:
+            [
+              "wait-for-it.sh",
+              "bbb-freeswitch:8021",
+              "--timeout=60",
+              "--strict",
+              "--",
+              "/usr/share/bbb-fsesl-akka/bin/bbb-fsesl-akka",
+            ]
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule

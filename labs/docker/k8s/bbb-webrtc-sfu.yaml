@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,32 +25,32 @@ spec:
       name: bbb-webrtc-sfu
     spec:
       containers:
-      - env:
-        - name: KURENTO_NAME
-          value: kurento
-        - name: KURENTO_URL
-          value: ws://bbb-kurento:8888/kurento
-        - name: REDIS_HOST
-          value: redis
-        - name: FREESWITCH_IP
-          value: bbb-freeswitch
-        - name: LOG_LEVEL
-          value: debug
-        image: fcecagno/bigbluebutton:bbb-webrtc-sfu
-        imagePullPolicy: Always
-        name: bbb-webrtc-sfu
-        ports:
-        - containerPort: 3008
-          protocol: TCP
+        - env:
+            - name: KURENTO_NAME
+              value: kurento
+            - name: KURENTO_URL
+              value: ws://bbb-kurento:8888/kurento
+            - name: REDIS_HOST
+              value: redis
+            - name: FREESWITCH_IP
+              value: bbb-freeswitch
+            - name: LOG_LEVEL
+              value: debug
+          image: fcecagno/bigbluebutton:bbb-webrtc-sfu
+          imagePullPolicy: Always
+          name: bbb-webrtc-sfu
+          ports:
+            - containerPort: 3008
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -62,9 +62,9 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 3008
-    port: 3008
+    - name: http
+      targetPort: 3008
+      port: 3008
   selector:
     app: bbb-webrtc-sfu
 
@@ -78,10 +78,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: bigbluebutton.rocket.chat
-    http:
-      paths:
-      - path: /bbb-webrtc-sfu
-        backend:
-          serviceName: bbb-webrtc-sfu
-          servicePort: 3008
+    - host: bigbluebutton.rocket.chat
+      http:
+        paths:
+          - path: /bbb-webrtc-sfu
+            backend:
+              serviceName: bbb-webrtc-sfu
+              servicePort: 3008

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,30 +25,30 @@ spec:
       name: bbb-web
     spec:
       containers:
-      - env:
-        - name: SERVER_DOMAIN
-          value: bigbluebutton.rocket.chat
-        - name: SHARED_SECRET
-          value: "12345"
-        - name: TURN_SECRET
-          value: "54321"
-        - name: TURN_DOMAIN
-          value: bigbluebutton.rocket.chat
-        image: fcecagno/bigbluebutton:bbb-web
-        imagePullPolicy: Always
-        name: bbb-web
-        ports:
-        - containerPort: 8080
-          protocol: TCP
+        - env:
+            - name: SERVER_DOMAIN
+              value: bigbluebutton.rocket.chat
+            - name: SHARED_SECRET
+              value: "12345"
+            - name: TURN_SECRET
+              value: "54321"
+            - name: TURN_DOMAIN
+              value: bigbluebutton.rocket.chat
+          image: fcecagno/bigbluebutton:bbb-web
+          imagePullPolicy: Always
+          name: bbb-web
+          ports:
+            - containerPort: 8080
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -60,9 +60,9 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 8080
-    port: 8080
+    - name: http
+      targetPort: 8080
+      port: 8080
   selector:
     app: bbb-web
 
@@ -76,10 +76,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: bigbluebutton.rocket.chat
-    http:
-      paths:
-      - path: /bigbluebutton
-        backend:
-          serviceName: bbb-web
-          servicePort: 8080
+    - host: bigbluebutton.rocket.chat
+      http:
+        paths:
+          - path: /bigbluebutton
+            backend:
+              serviceName: bbb-web
+              servicePort: 8080

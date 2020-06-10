@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,23 +25,23 @@ spec:
       name: bbb-freeswitch
     spec:
       containers:
-      - image: fcecagno/bigbluebutton:bbb-freeswitch
-        imagePullPolicy: Always
-        name: bbb-freeswitch
-        ports:
-        - containerPort: 7443
-          protocol: TCP
-        - containerPort: 8021
-          protocol: TCP
+        - image: fcecagno/bigbluebutton:bbb-freeswitch
+          imagePullPolicy: Always
+          name: bbb-freeswitch
+          ports:
+            - containerPort: 7443
+              protocol: TCP
+            - containerPort: 8021
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -53,11 +53,11 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 7443
-    port: 7443
-  - name: freeswitch-8021
-    targetPort: 8021
-    port: 8021
+    - name: http
+      targetPort: 7443
+      port: 7443
+    - name: freeswitch-8021
+      targetPort: 8021
+      port: 8021
   selector:
     app: bbb-freeswitch

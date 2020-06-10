@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,30 +25,30 @@ spec:
       name: bbb-webhooks
     spec:
       containers:
-      - env:
-        - name: REDIS_HOST
-          value: redis
-        - name: SHARED_SECRET
-          value: "12345"
-        - name: SERVER_DOMAIN
-          value: bigbluebutton.rocket.chat
-        - name: BEARER_AUTH
-          value: "1"
-        image: fcecagno/bigbluebutton:bbb-webhooks
-        imagePullPolicy: Always
-        name: bbb-webhooks
-        ports:
-        - containerPort: 3005
-          protocol: TCP
+        - env:
+            - name: REDIS_HOST
+              value: redis
+            - name: SHARED_SECRET
+              value: "12345"
+            - name: SERVER_DOMAIN
+              value: bigbluebutton.rocket.chat
+            - name: BEARER_AUTH
+              value: "1"
+          image: fcecagno/bigbluebutton:bbb-webhooks
+          imagePullPolicy: Always
+          name: bbb-webhooks
+          ports:
+            - containerPort: 3005
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -60,9 +60,9 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 3005
-    port: 3005
+    - name: http
+      targetPort: 3005
+      port: 3005
   selector:
     app: bbb-webhooks
 
@@ -76,10 +76,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: bigbluebutton.rocket.chat
-    http:
-      paths:
-      - path: /bigbluebutton/api/hooks
-        backend:
-          serviceName: bbb-webhooks
-          servicePort: 3005
+    - host: bigbluebutton.rocket.chat
+      http:
+        paths:
+          - path: /bigbluebutton/api/hooks
+            backend:
+              serviceName: bbb-webhooks
+              servicePort: 3005

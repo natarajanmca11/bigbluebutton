@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,21 +25,21 @@ spec:
       name: bbb-apps-akka
     spec:
       containers:
-      - env:
-        - name: JAVA_OPTS
-          value: -Dredis.host=redis
-        image: fcecagno/bigbluebutton:bbb-apps-akka
-        imagePullPolicy: Always
-        name: bbb-apps-akka
-        ports:
-        - containerPort: 8080
-          protocol: TCP
+        - env:
+            - name: JAVA_OPTS
+              value: -Dredis.host=redis
+          image: fcecagno/bigbluebutton:bbb-apps-akka
+          imagePullPolicy: Always
+          name: bbb-apps-akka
+          ports:
+            - containerPort: 8080
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule

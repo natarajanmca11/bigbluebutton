@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,34 +25,34 @@ spec:
       name: bbb-coturn
     spec:
       containers:
-      - env:
-        - name: PORT
-          value: "3478"
-        - name: SERVER_DOMAIN
-          value: bigbluebutton.rocket.chat
-        - name: SECRET
-          value: "54321"
-        - name: EXTERNAL_IP
-          value: "35.185.19.180"
-        - name: ENABLE_REST_API
-          value: "1"
-        image: fcecagno/bigbluebutton:bbb-coturn
-        imagePullPolicy: Always
-        name: bbb-coturn
-        ports:
-        - containerPort: 3478
-          protocol: TCP
-        - containerPort: 3478
-          protocol: UDP
+        - env:
+            - name: PORT
+              value: "3478"
+            - name: SERVER_DOMAIN
+              value: bigbluebutton.rocket.chat
+            - name: SECRET
+              value: "54321"
+            - name: EXTERNAL_IP
+              value: "35.185.19.180"
+            - name: ENABLE_REST_API
+              value: "1"
+          image: fcecagno/bigbluebutton:bbb-coturn
+          imagePullPolicy: Never
+          name: bbb-coturn
+          ports:
+            - containerPort: 3478
+              protocol: TCP
+            - containerPort: 3478
+              protocol: UDP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -64,8 +64,8 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 3478
-    port: 3478
+    - name: http
+      targetPort: 3478
+      port: 3478
   selector:
     app: bbb-coturn

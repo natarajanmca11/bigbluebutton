@@ -18,3 +18,31 @@ You can install on a Ubuntu 16.04 64-bit server.  We provide [bbb-install.sh](ht
 For full technical documentation BigBlueButton -- including architecture, features, API, and GreenLight (the default front-end) -- see [http://docs.bigbluebutton.org/](http://docs.bigbluebutton.org/).
 
 BigBlueButton and the BigBlueButton Logo are trademarks of [BigBlueButton Inc](http://bigbluebutton.org) .
+
+
+
+# Order Of Execution
+1. Mongo
+2. Redis
+3. bbb-html5
+4. bbb-webhooks
+5. bbb-coturn
+6. bbb-freeswitch
+7. bbb-kurento
+
+8. bbb-webrtc-sfu
+9. bbb-apps-akka
+10. bbb-fsesl-akka
+11. bbb-web
+12. bbb-greenlight
+13. bbb-nginx - done
+14. traefik
+15. bbb-lti
+
+# Minikube start
+
+```
+minikube start --cpus=4 --memory=8g --container-runtime=docker --disk-size=25g 
+eval $(minikube docker-env)
+
+```

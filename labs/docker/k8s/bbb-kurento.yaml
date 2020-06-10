@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,27 +25,27 @@ spec:
       name: bbb-kurento
     spec:
       containers:
-      - env:
-        - name: STUN_IP
-        # TODO: how to get this IP?
-          value: "35.185.19.180"
-        - name: STUN_PORT
-          value: "3478"
-        image: fcecagno/bigbluebutton:bbb-kurento
-        imagePullPolicy: Always
-        name: bbb-kurento
-        ports:
-        - containerPort: 8888
-          protocol: TCP
+        - env:
+            - name: STUN_IP
+              # TODO: how to get this IP?
+              value: "35.185.19.180"
+            - name: STUN_PORT
+              value: "3478"
+          image: fcecagno/bigbluebutton:bbb-kurento
+          imagePullPolicy: Always
+          name: bbb-kurento
+          ports:
+            - containerPort: 8888
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -57,13 +57,11 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 8888
-    port: 8888
+    - name: http
+      targetPort: 8888
+      port: 8888
   selector:
     app: bbb-kurento
-
-
     # volumes:
     #   - media-video:/var/kurento/recordings
     #   - media-screenshare:/var/kurento/screenshare

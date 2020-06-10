@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,32 +25,32 @@ spec:
       name: bbb-html5
     spec:
       containers:
-      - env:
-        - name: MONGO_URL
-          value: mongodb://mongo:27017/
-        - name: MONGO_DB
-          value: bbbhtml5
-        - name: METEOR_SETTINGS_MODIFIER
-          value: ".public.kurento.wsUrl = \"wss://bigbluebutton.rocket.chat/bbb-webrtc-sfu\" | .public.kurento.enableVideo = true | .public.kurento.enableScreensharing = true | .public.kurento.enableVideoStats = true | .public.kurento.enableListenOnly = true"
-        - name: REDIS_HOST
-          value: redis
-        - name: ROOT_URL
-          value: http://127.0.0.1/html5client
-        image: fcecagno/bigbluebutton:bbb-html5
-        imagePullPolicy: Always
-        name: bbb-html5
-        ports:
-        - containerPort: 3000
-          protocol: TCP
+        - env:
+            - name: MONGO_URL
+              value: mongodb://mongo:27017/
+            - name: MONGO_DB
+              value: bbbhtml5
+            - name: METEOR_SETTINGS_MODIFIER
+              value: '.public.kurento.wsUrl = "wss://bigbluebutton.rocket.chat/bbb-webrtc-sfu" | .public.kurento.enableVideo = true | .public.kurento.enableScreensharing = true | .public.kurento.enableVideoStats = true | .public.kurento.enableListenOnly = true'
+            - name: REDIS_HOST
+              value: redis
+            - name: ROOT_URL
+              value: http://127.0.0.1/html5client
+          image: bbb-html5
+          imagePullPolicy: Never
+          name: bbb-html5
+          ports:
+            - containerPort: 3000
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -62,9 +62,9 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 3000
-    port: 3000
+    - name: http
+      targetPort: 3000
+      port: 3000
   selector:
     app: bbb-html5
 
@@ -78,14 +78,14 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: bigbluebutton.rocket.chat
-    http:
-      paths:
-      - path: /html5client
-        backend:
-          serviceName: bbb-html5
-          servicePort: 3000
-      - path: /_timesync
-        backend:
-          serviceName: bbb-html5
-          servicePort: 3000
+    - host: bigbluebutton.rocket.chat
+      http:
+        paths:
+          - path: /html5client
+            backend:
+              serviceName: bbb-html5
+              servicePort: 3000
+          - path: /_timesync
+            backend:
+              serviceName: bbb-html5
+              servicePort: 3000

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -25,24 +25,24 @@ spec:
       name: bbb-freeswitch-nginx
     spec:
       containers:
-      - env:
-        - name: SERVER_DOMAIN
-          value: bigbluebutton.rocket.chat
-        image: fcecagno/bigbluebutton:bbb-nginx
-        imagePullPolicy: Always
-        name: bbb-freeswitch-nginx
-        ports:
-        - containerPort: 80
-          protocol: TCP
+        - env:
+            - name: SERVER_DOMAIN
+              value: bigbluebutton.rocket.chat
+          image: fcecagno/bigbluebutton:bbb-nginx
+          imagePullPolicy: Always
+          name: bbb-freeswitch-nginx
+          ports:
+            - containerPort: 80
+              protocol: TCP
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       nodeSelector:
-        role: 'bigbluebutton'
+        role: "bigbluebutton"
       tolerations:
-      - key: role
-        operator: Equal
-        value: 'bigbluebutton'
-        effect: NoSchedule
+        - key: role
+          operator: Equal
+          value: "bigbluebutton"
+          effect: NoSchedule
 
 ---
 apiVersion: v1
@@ -54,9 +54,9 @@ metadata:
     traefik.backend.circuitbreaker: "NetworkErrorRatio() > 0.5"
 spec:
   ports:
-  - name: http
-    targetPort: 80
-    port: 80
+    - name: http
+      targetPort: 80
+      port: 80
   selector:
     app: bbb-freeswitch-nginx
 
@@ -70,10 +70,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: bigbluebutton.rocket.chat
-    http:
-      paths:
-      - path: /ws
-        backend:
-          serviceName: bbb-freeswitch-nginx
-          servicePort: 80
+    - host: bigbluebutton.rocket.chat
+      http:
+        paths:
+          - path: /ws
+            backend:
+              serviceName: bbb-freeswitch-nginx
+              servicePort: 80
